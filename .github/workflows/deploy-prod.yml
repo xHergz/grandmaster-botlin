@@ -16,9 +16,25 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
+      # Go into the repository directory
+      - name: Going into the repository directory
+        run: cd $GITHUB_WORKSPACE
+
+      # Create the env file
+      - name: Creating the env file
+        run: |
+          touch .env
+          echo DISCORD_APPLICATION_TOKEN=${{ secrets.DISCORD_APPLICATION_TOKEN }} >> .env
+          echo DISCORD_CLIENT_ID=${{ secrets.DISCORD_CLIENT_ID }} >> .env
+          echo MIXPANEL_TOKEN=${{ secrets.MIXPANEL_TOKEN }} >> .env
+
       # Builds the app
       - name: Building the app
-        run: cd $GITHUB_WORKSPACE && npm i --force && npm run build
+        run: npm i && npm run build
+
+      # Copy env to build folder
+      - name: Copying the env file to the build folder
+        run: cp $GITHUB_WORKSPACE/.env $GITHUB_WORKSPACE/build/.env
 
       # Set up a place to store the private key
       - name: Creating a temp private key file
