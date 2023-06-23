@@ -1,16 +1,22 @@
 {
-  "name": "king-gachapin",
+  "name": "grandmaster-botlin",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "https://github.com/xHergz/king-gachapin",
+  "repository": "https://github.com/xHergz/grandmaster-botlin",
   "author": "Justin <xhergz@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "ts-node src/app.ts"
+    "build": "tsc",
+    "deploy:dev": "ts-node scripts/deploy-commands.ts",
+    "deploy:prod": "ts-node scripts/deploy-prod-commands.ts",
+    "dev": "ts-node src/app.ts",
+    "start": "node build/app.js"
   },
   "dependencies": {
+    "date-fns": "^2.30.0",
     "discord.js": "^14.11.0",
-    "dotenv": "^16.0.3"
+    "dotenv": "^16.0.3",
+    "mixpanel": "^0.17.0"
   },
   "devDependencies": {
     "@types/node": "^20.1.3",
