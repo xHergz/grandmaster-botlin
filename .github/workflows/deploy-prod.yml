@@ -34,4 +34,4 @@ jobs:
 
       # Using rsync to copy files to the server
       - name: Copying files to the server
-        run: rsync --delete -zrpv -e "ssh -o StrictHostKeyChecking=no -i ${{ env.TEMP_PRIVATE_KEY_FILE}}" $GITHUB_WORKSPACE/out/ ${{ secrets.DEPLOY_BOT_USERNAME }}@${{ secrets.HERGBOT_WEB_SERVER }}:/var/app/grandmaster-botlin/
+        run: rsync --delete -zrpv -e "ssh -o StrictHostKeyChecking=no -i ${{ env.TEMP_PRIVATE_KEY_FILE}}" $GITHUB_WORKSPACE/build/ ${{ secrets.DEPLOY_BOT_USERNAME }}@${{ secrets.HERGBOT_WEB_SERVER }}:/var/app/grandmaster-botlin/
