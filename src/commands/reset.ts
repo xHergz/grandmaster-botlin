@@ -58,7 +58,7 @@ const resetCommand: DiscordBotCommand = {
         monsterCode,
         recipients
       );
-      interaction.followUp({
+      interaction.channel?.send({
         content: `${MONSTER_SPAWN_DATA[monsterCode].name} Spawned. ${mentions}`,
       });
     }, spawnInfo.spawnTime * 1000 - Date.now());
