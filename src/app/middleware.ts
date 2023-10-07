@@ -24,6 +24,8 @@ export async function middleware(request: NextRequest) {
   if (!isValidRequest) {
     return NextResponse.json({}, { status: 401 });
   }
+
+  return NextResponse.next();
 }
 
 // See "Matching Paths" below to learn more
