@@ -10,6 +10,7 @@
     "deploy:dev": "ts-node src/scripts/deploy-commands.ts"
   },
   "dependencies": {
+    "discord-interactions": "^3.4.0",
     "discord.js": "^14.13.0",
     "dotenv": "^16.3.1",
     "next": "latest",
