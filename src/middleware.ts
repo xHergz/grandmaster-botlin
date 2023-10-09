@@ -1,14 +1,12 @@
 import { verifyKey } from "discord-interactions";
 import { NextResponse } from "next/server";
-import { headers } from "next/headers";
 
 import type { NextRequest } from "next/server";
 
 // This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
-  const headerList = headers();
-  const signature = headerList.get("X-Signature-Ed25519");
-  const timestamp = headerList.get("X-Signature-Timestamp");
+  const signature = request.headers.get("X-Signature-Ed25519");
+  const timestamp = request.headers.get("X-Signature-Timestamp");
 
   if (!signature || !timestamp) {
     return NextResponse.json({}, { status: 401 });

@@ -5,7 +5,6 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const { type } = body;
-  console.log(body);
   if (type === 1) {
     return NextResponse.json({ type: 1 }, { status: 200 });
   }
