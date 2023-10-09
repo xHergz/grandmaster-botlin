@@ -8,7 +8,7 @@ export async function middleware(request: NextRequest) {
   const signature = request.headers.get("X-Signature-Ed25519");
   const timestamp = request.headers.get("X-Signature-Timestamp");
 
-  console.log(signature, typeof signature, timestamp, typeof timestamp);
+  console.log(process.env.DISCORD_PUBLIC_KEY);
   const rawBody = await request.text();
 
   if (!signature || !timestamp) {
