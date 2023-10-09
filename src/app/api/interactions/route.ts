@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
       { status: 200 }
     );
   } else if (type === InteractionType.APPLICATION_COMMAND) {
-    NextResponse.json(
+    return NextResponse.json(
       {
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
