@@ -1,7 +1,7 @@
 import { REST, Routes } from "discord.js";
 import * as dotenv from "dotenv";
 
-dotenv.config();
+dotenv.config({ path: ".env.local" });
 
 import { ALL_COMMANDS } from "../commands";
 

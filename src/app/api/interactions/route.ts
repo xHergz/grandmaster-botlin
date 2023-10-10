@@ -2,6 +2,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { InteractionResponseType, InteractionType } from "discord-interactions";
+import { listMonsterCodes } from "@/commands/monster-codes";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -13,6 +14,39 @@ export async function POST(req: NextRequest) {
       { status: 200 }
     );
   } else if (type === InteractionType.APPLICATION_COMMAND) {
+    const command = body.data.name;
+    switch (command) {
+      case "test":
+        return NextResponse.json(
+          {
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            data: {
+              content: "Hello world",
+            },
+          },
+          { status: 200 }
+        );
+      case "monster-codes":
+        return NextResponse.json(
+          {
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            data: {
+              content: listMonsterCodes(),
+            },
+          },
+          { status: 200 }
+        );
+      default:
+        return NextResponse.json(
+          {
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            data: {
+              content: "Unknown command",
+            },
+          },
+          { status: 200 }
+        );
+    }
     return NextResponse.json(
       {
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
