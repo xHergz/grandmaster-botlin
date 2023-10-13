@@ -8,13 +8,11 @@ export async function middleware(request: NextRequest) {
   const signature = request.headers.get("X-Signature-Ed25519");
   const timestamp = request.headers.get("X-Signature-Timestamp");
 
-  console.log(process.env.DISCORD_PUBLIC_KEY);
-  const rawBody = await request.text();
-
   if (!signature || !timestamp) {
     return NextResponse.json({}, { status: 401 });
   }
 
+  const rawBody = await request.text();
   const isValidRequest = verifyKey(
     rawBody,
     signature,

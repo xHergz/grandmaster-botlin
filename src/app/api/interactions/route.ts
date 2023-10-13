@@ -2,7 +2,22 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { InteractionResponseType, InteractionType } from "discord-interactions";
-import { listMonsterCodes } from "@/commands/monster-codes";
+import { listMonsterCodes } from "@/utils/command.utils";
+import { createSuperUserClient } from "@/utils/supbase-server.utils";
+import SupabaseDataAccessLayer from "@/lib/supabase";
+import { verifyGuildMembership } from "@/utils/api.utils";
+import { DiscordGuild, DiscordUser } from "@/types/discord.types";
+
+const GENERIC_ERROR_RESPONSE = NextResponse.json(
+  {
+    type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+    data: {
+      content:
+        "Oops! There was an error completing your request. Please try again in a few minutes.",
+    },
+  },
+  { status: 200 }
+);
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -14,6 +29,19 @@ export async function POST(req: NextRequest) {
       { status: 200 }
     );
   } else if (type === InteractionType.APPLICATION_COMMAND) {
+    const guild: DiscordGuild = {
+      id: body.guild_id,
+      name: body.guild.name ?? null,
+    };
+    const user: DiscordUser = {
+      id: body.member.user.id,
+      name: body.member.user.username,
+    };
+    // Check if the membership exists
+    const membership = await verifyGuildMembership(guild, user);
+    if (!membership) {
+      return GENERIC_ERROR_RESPONSE;
+    }
     const command = body.data.name;
     switch (command) {
       case "test":
@@ -47,15 +75,6 @@ export async function POST(req: NextRequest) {
           { status: 200 }
         );
     }
-    return NextResponse.json(
-      {
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-        data: {
-          content: "Hello world",
-        },
-      },
-      { status: 200 }
-    );
   }
 
   return NextResponse.json({}, { status: 200 });

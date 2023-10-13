@@ -5,7 +5,7 @@ export type MapCode = "cotd" | "geb" | "gi" | "jcf" | "lcf" | "menes" | "ocf";
 export type Map = {
   name: string;
   planet: PlanetCode;
-  colour?: string;
+  colour?: number;
 };
 
 export type MapData = {
@@ -16,7 +16,7 @@ export const MAP_DATA: MapData = {
   cotd: {
     name: "Cave of the Dead",
     planet: "junon",
-    colour: "#FC6404",
+    colour: 0xfc6404,
   },
   geb: {
     name: "Geb Desert",

@@ -1,0 +1,62 @@
+{
+  "app_permissions": "559623605575233",
+  "application_id": "1157361126347128852",
+  "channel": {
+    "flags": 0,
+    "guild_id": "598157729499971584",
+    "id": "917854694624350218",
+    "last_message_id": "1160898654169743411",
+    "name": "general",
+    "nsfw": false,
+    "parent_id": "917854324988719125",
+    "permissions": "562949953421311",
+    "position": 6,
+    "rate_limit_per_user": 0,
+    "topic": null,
+    "type": 0
+  },
+  "channel_id": "917854694624350218",
+  "data": {
+    "guild_id": "598157729499971584",
+    "id": "1157388035281924268",
+    "name": "test",
+    "type": 1
+  },
+  "entitlement_sku_ids": [],
+  "entitlements": [],
+  "guild": {
+    "features": ["EXPOSED_TO_ACTIVITIES_WTP_EXPERIMENT"],
+    "id": "598157729499971584",
+    "locale": "en-US"
+  },
+  "guild_id": "598157729499971584",
+  "guild_locale": "en-US",
+  "id": "1160899932274827295",
+  "locale": "en-US",
+  "member": {
+    "avatar": null,
+    "communication_disabled_until": null,
+    "deaf": false,
+    "flags": 0,
+    "joined_at": "2019-07-09T14:25:15.965000+00:00",
+    "mute": false,
+    "nick": null,
+    "pending": false,
+    "permissions": "562949953421311",
+    "premium_since": null,
+    "roles": ["628288704930250752"],
+    "unusual_dm_activity_until": null,
+    "user": {
+      "avatar": "f636c82324b7935622f2a1a5be631903",
+      "avatar_decoration_data": null,
+      "discriminator": "0",
+      "global_name": "Justin",
+      "id": "119855534907064321",
+      "public_flags": 0,
+      "username": "xhergz"
+    }
+  },
+  "token": "aW50ZXJhY3Rpb246MTE2MDg5OTkzMjI3NDgyNzI5NTowd2lXRHc1RWFJd1pEYnN3akFXdzNvM3EwMzdwYkFxVEEycFRQYXU1dDZGWXM0NU9HSXhoT3BBcDU3bVdUSk9uZk8xbGJpYzJYYlVnS3VYUGRHaGlsMmtwa3hMVHVBcHo4R0JoU0V2Z2pzRm41MVBubzdkQnJoQ0JGTU5DZ0pjOQ",
+  "type": 2,
+  "version": 1
+}

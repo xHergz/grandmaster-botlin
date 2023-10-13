@@ -2,7 +2,7 @@ export type PlanetCode = "junon" | "luna" | "eldeon" | "oro";
 
 export type Planet = {
   name: string;
-  colour: string;
+  colour: number;
 };
 
 export type PlanetData = {
@@ -12,18 +12,18 @@ export type PlanetData = {
 export const PLANET_DATA: PlanetData = {
   junon: {
     name: "Junon",
-    colour: "#449E48",
+    colour: 0x449e48,
   },
   luna: {
     name: "Luna",
-    colour: "#5BC0DE",
+    colour: 0x5bc0de,
   },
   eldeon: {
     name: "Eldeon",
-    colour: "#173518",
+    colour: 0x173518,
   },
   oro: {
     name: "Oro",
-    colour: "#C6A785",
+    colour: 0xc6a785,
   },
 };

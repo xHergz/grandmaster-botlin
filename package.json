@@ -10,9 +10,12 @@
     "deploy:dev": "ts-node src/scripts/deploy-commands.ts"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.38.0",
+    "date-fns": "^2.30.0",
     "discord-interactions": "^3.4.0",
     "discord.js": "^14.13.0",
     "dotenv": "^16.3.1",
+    "mixpanel": "^0.18.0",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest"
@@ -25,6 +28,7 @@
     "eslint": "latest",
     "eslint-config-next": "latest",
     "postcss": "latest",
+    "supabase": "^1.100.1",
     "tailwindcss": "latest",
     "ts-node": "^10.9.1",
     "typescript": "latest"
