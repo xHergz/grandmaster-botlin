@@ -31,10 +31,12 @@ export type MonsterProperties = {
 
 class Analytics {
   private static instance: Analytics;
-  private mixpanel: Mixpanel.Mixpanel;
+  private mixpanel: Mixpanel.Mixpanel | null = null;
 
   private constructor() {
-    this.mixpanel = Mixpanel.init(process.env.MIXPANEL_TOKEN!);
+    if (process.env.NODE_ENV === "production" && process.env.MIXPANEL_TOKEN) {
+      this.mixpanel = Mixpanel.init(process.env.MIXPANEL_TOKEN!);
+    }
   }
 
   public static getInstance(): Analytics {
@@ -76,6 +78,12 @@ class Analytics {
   }
 
   public identify(userId: string, username: string, guildId: string) {
+    if (!this.mixpanel) {
+      console.info(
+        `[MIXPANEL] Identify - userId: ${userId}, username: ${username}, guildId: ${guildId}`
+      );
+      return;
+    }
     this.mixpanel.people.set_once(userId, {
       $created: new Date().toISOString(),
     });
@@ -147,6 +155,14 @@ class Analytics {
     userId: string,
     properties: object = {}
   ) {
+    if (!this.mixpanel) {
+      console.info(
+        `[MIXPANEL] Track - event: ${event}, userId: ${userId}, guildId: ${guildId}, properties: ${JSON.stringify(
+          properties
+        )}`
+      );
+      return;
+    }
     this.mixpanel.track(event, {
       distinct_id: userId,
       guildId,

@@ -24,11 +24,12 @@ class SupabaseDataAccessLayer {
   async getGuild(
     guildId: GuildId
   ): Promise<{ error: PostgrestError | null; data: Guild | null }> {
-    return await this.supabase
+    const { error, data } = await this.supabase
       .from("Discord_Guild")
       .select("*")
       .eq("Discord_Guild_Id", guildId)
       .single();
+    return this.surpressSingleError(error, data);
   }
 
   async getGuildMembership(
@@ -38,33 +39,36 @@ class SupabaseDataAccessLayer {
     error: PostgrestError | null;
     data: Membership | null;
   }> {
-    return await this.supabase
+    const { error, data } = await this.supabase
       .from("Discord_Guild_Membership")
       .select("*")
       .eq("Discord_Guild_Id", guildId)
       .eq("Discord_User_Id", userId)
       .single();
+    return this.surpressSingleError(error, data);
   }
 
   async getMonsterSpawn(monsterSpawnId: MonsterSpawnId): Promise<{
     error: PostgrestError | null;
     data: MonsterSpawn | null;
   }> {
-    return await this.supabase
+    const { error, data } = await this.supabase
       .from("Monster_Spawn")
       .select("*")
       .eq("Monster_Spawn_Id", monsterSpawnId)
       .single();
+    return this.surpressSingleError(error, data);
   }
 
   async getUser(
     userId: UserId
   ): Promise<{ error: PostgrestError | null; data: User | null }> {
-    return await this.supabase
+    const { error, data } = await this.supabase
       .from("Discord_User")
       .select("*")
       .eq("Discord_User_Id", userId)
       .single();
+    return this.surpressSingleError(error, data);
   }
 
   async createGuild(
@@ -125,6 +129,13 @@ class SupabaseDataAccessLayer {
       .single();
 
     return { error, data: data ?? null };
+  }
+
+  private surpressSingleError<T>(
+    error: PostgrestError | null,
+    data: T | null
+  ): { error: PostgrestError | null; data: T | null } {
+    return error?.code === "PGRST116" ? { error: null, data } : { error, data };
   }
 }
 

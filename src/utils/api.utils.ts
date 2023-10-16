@@ -7,6 +7,31 @@ import SupabaseDataAccessLayer, {
 } from "@/lib/supabase";
 import { DiscordGuild, DiscordUser } from "@/types/discord.types";
 import { createSuperUserClient } from "@/utils/supbase-server.utils";
+import { verifyKey } from "discord-interactions";
+import { NextRequest } from "next/server";
+
+export const verifyDiscordMessage = async (
+  request: NextRequest
+): Promise<boolean> => {
+  if (process.env.NODE_ENV === "development") {
+    return true;
+  }
+
+  const signature = request.headers.get("X-Signature-Ed25519");
+  const timestamp = request.headers.get("X-Signature-Timestamp");
+
+  if (!signature || !timestamp) {
+    return false;
+  }
+
+  const rawBody = await request.text();
+  return verifyKey(
+    rawBody,
+    signature,
+    timestamp,
+    process.env.DISCORD_PUBLIC_KEY!
+  );
+};
 
 export const verifyGuildMembership = async (
   guild: DiscordGuild,

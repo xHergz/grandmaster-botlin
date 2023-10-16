@@ -21,7 +21,6 @@ const GENERIC_ERROR_RESPONSE = NextResponse.json(
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  console.log(JSON.stringify(body));
   const { type } = body;
   if (type === InteractionType.PING) {
     return NextResponse.json(

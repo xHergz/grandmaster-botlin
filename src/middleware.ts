@@ -2,23 +2,11 @@ import { verifyKey } from "discord-interactions";
 import { NextResponse } from "next/server";
 
 import type { NextRequest } from "next/server";
+import { verifyDiscordMessage } from "./utils/api.utils";
 
 // This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
-  const signature = request.headers.get("X-Signature-Ed25519");
-  const timestamp = request.headers.get("X-Signature-Timestamp");
-
-  if (!signature || !timestamp) {
-    return NextResponse.json({}, { status: 401 });
-  }
-
-  const rawBody = await request.text();
-  const isValidRequest = verifyKey(
-    rawBody,
-    signature,
-    timestamp,
-    process.env.DISCORD_PUBLIC_KEY!
-  );
+  const isValidRequest = await verifyDiscordMessage(request);
   if (!isValidRequest) {
     return NextResponse.json({}, { status: 401 });
   }
