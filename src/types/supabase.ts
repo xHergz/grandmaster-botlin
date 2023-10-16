@@ -11,18 +11,27 @@ export interface Database {
     Tables: {
       Alert_Recipient: {
         Row: {
+          Discord_Guild_Id: string;
           Discord_User_Id: string;
-          Tracked_Spawn_Id: string;
+          Monster_Spawn_Id: string;
         };
         Insert: {
+          Discord_Guild_Id: string;
           Discord_User_Id: string;
-          Tracked_Spawn_Id: string;
+          Monster_Spawn_Id: string;
         };
         Update: {
+          Discord_Guild_Id?: string;
           Discord_User_Id?: string;
-          Tracked_Spawn_Id?: string;
+          Monster_Spawn_Id?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: "Alert_Recipient_Discord_Guild_Id_fkey";
+            columns: ["Discord_Guild_Id"];
+            referencedRelation: "Discord_Guild";
+            referencedColumns: ["Discord_Guild_Id"];
+          },
           {
             foreignKeyName: "Alert_Recipient_Discord_User_Id_fkey";
             columns: ["Discord_User_Id"];
@@ -30,10 +39,10 @@ export interface Database {
             referencedColumns: ["Discord_User_Id"];
           },
           {
-            foreignKeyName: "Alert_Recipient_Tracked_Spawn_Id_fkey";
-            columns: ["Tracked_Spawn_Id"];
-            referencedRelation: "Tracked_Spawn";
-            referencedColumns: ["Tracked_Spawn_Id"];
+            foreignKeyName: "Alert_Recipient_Monster_Spawn_Id_fkey";
+            columns: ["Monster_Spawn_Id"];
+            referencedRelation: "Monster_Spawn";
+            referencedColumns: ["Monster_Spawn_Id"];
           }
         ];
       };

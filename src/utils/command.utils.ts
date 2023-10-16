@@ -8,6 +8,8 @@ import analytics from "../lib/analytics";
 import { Embed } from "@/types/discord.types";
 import { MAP_DATA } from "@/constants/map.constants";
 import { PLANET_DATA } from "@/constants/planet.constants";
+import { createSuperUserClient } from "./supbase-server.utils";
+import SupabaseDataAccessLayer from "@/lib/supabase";
 
 const getColour = (monster: MonsterCode): number => {
   const monsterInfo = MONSTER_SPAWN_DATA[monster];
@@ -22,18 +24,45 @@ const getMonsterImageUrl = (monster: MonsterCode): string => {
   return `https://www.aruarose.com/public/images/armory/npcs/${monsterInfo.npcId}.jpg`;
 };
 
-export const addAlert = (
+export const addAlert = async (
   monsterCode: string,
   guildId: string,
   userId: string
-): string => {
+): Promise<string> => {
   if (!MONSTER_CODES.includes(monsterCode)) {
     analytics.invalidMonsterCode(guildId, userId, monsterCode);
     return "Invalid monster code.";
   }
 
+  const supabase = createSuperUserClient();
+  const db = new SupabaseDataAccessLayer(supabase);
+  const getResponse = await db.getAlertRecipient(monsterCode, guildId, userId);
+
+  if (getResponse.error) {
+    analytics.commandFailed(
+      guildId,
+      userId,
+      "add-alert",
+      getResponse.error.message
+    );
+    return "Unable to add to alerts. Please try again later.";
+  } else if (!getResponse.data) {
+    const createResponse = await db.createAlertRecipient(
+      monsterCode,
+      guildId,
+      userId
+    );
+    if (createResponse.error) {
+      analytics.commandFailed(
+        guildId,
+        userId,
+        "add-alert",
+        createResponse.error.message
+      );
+    }
+  }
+
   analytics.addedAlert(guildId, userId, monsterCode);
-  guildTracker.addSpawnAlert(guildId, monsterCode, userId);
   return `You've been added to alerts for ${MONSTER_SPAWN_DATA[monsterCode].name}.`;
 };
 
@@ -46,18 +75,31 @@ export const listMonsterCodes = () => {
   return `\`\`\`\n${listString.join("\n")}\`\`\``;
 };
 
-export const removeAlert = (
+export const removeAlert = async (
   monsterCode: string,
   guildId: string,
   userId: string
-): string => {
+): Promise<string> => {
   if (!MONSTER_CODES.includes(monsterCode)) {
     analytics.invalidMonsterCode(guildId, userId, monsterCode);
     return "Invalid monster code.";
   }
 
+  const supabase = createSuperUserClient();
+  const db = new SupabaseDataAccessLayer(supabase);
+  const response = await db.removeAlertRecipient(monsterCode, guildId, userId);
+
+  if (response.error) {
+    analytics.commandFailed(
+      guildId,
+      userId,
+      "remove-alert",
+      response.error.message
+    );
+    return "Unable to remove from alerts. Please try again later.";
+  }
+
   analytics.removedAlert(guildId, userId, monsterCode);
-  guildTracker.removeSpawnAlert(guildId, monsterCode, userId);
   return `You've been removed from alerts for ${MONSTER_SPAWN_DATA[monsterCode].name}.`;
 };
 

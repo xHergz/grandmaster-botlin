@@ -7,8 +7,20 @@ import SupabaseDataAccessLayer, {
 } from "@/lib/supabase";
 import { DiscordGuild, DiscordUser } from "@/types/discord.types";
 import { createSuperUserClient } from "@/utils/supbase-server.utils";
-import { verifyKey } from "discord-interactions";
-import { NextRequest } from "next/server";
+import { InteractionResponseType, verifyKey } from "discord-interactions";
+import { NextRequest, NextResponse } from "next/server";
+
+export const respondToInteraction = (message: string): NextResponse => {
+  return NextResponse.json(
+    {
+      type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+      data: {
+        content: message,
+      },
+    },
+    { status: 200 }
+  );
+};
 
 export const verifyDiscordMessage = async (
   request: NextRequest

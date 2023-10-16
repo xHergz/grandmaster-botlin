@@ -2,6 +2,9 @@ import type { PostgrestError, SupabaseClient } from "@supabase/supabase-js";
 
 import { Database } from "@/types/supabase";
 
+export type AlertRecipient =
+  Database["public"]["Tables"]["Alert_Recipient"]["Row"];
+
 export type Guild = Database["public"]["Tables"]["Discord_Guild"]["Row"];
 export type GuildId = Guild["Discord_Guild_Id"];
 
@@ -19,6 +22,21 @@ class SupabaseDataAccessLayer {
 
   constructor(client: SupabaseClient) {
     this.supabase = client;
+  }
+
+  async getAlertRecipient(
+    monsterSpawnId: MonsterSpawnId,
+    guildId: GuildId,
+    userId: UserId
+  ): Promise<{ error: PostgrestError | null; data: User | null }> {
+    const { error, data } = await this.supabase
+      .from("Alert_Recipient")
+      .select("*")
+      .eq("Monster_Spawn_Id", monsterSpawnId)
+      .eq("Discord_Guild_Id", guildId)
+      .eq("Discord_User_Id", userId)
+      .single();
+    return this.surpressSingleError(error, data);
   }
 
   async getGuild(
@@ -69,6 +87,29 @@ class SupabaseDataAccessLayer {
       .eq("Discord_User_Id", userId)
       .single();
     return this.surpressSingleError(error, data);
+  }
+
+  async createAlertRecipient(
+    monsterSpawnId: MonsterSpawnId,
+    guildId: GuildId,
+    userId: UserId
+  ): Promise<{
+    error: PostgrestError | null;
+    data: AlertRecipient | null;
+  }> {
+    const { error, data } = await this.supabase
+      .from("Alert_Recipient")
+      .insert([
+        {
+          Monster_Spawn_Id: monsterSpawnId,
+          Discord_Guild_Id: guildId,
+          Discord_User_Id: userId,
+        },
+      ])
+      .select("*")
+      .single();
+
+    return { error, data: data ?? null };
   }
 
   async createGuild(
@@ -129,6 +170,23 @@ class SupabaseDataAccessLayer {
       .single();
 
     return { error, data: data ?? null };
+  }
+
+  async removeAlertRecipient(
+    monsterSpawnId: MonsterSpawnId,
+    guildId: GuildId,
+    userId: UserId
+  ): Promise<{
+    error: PostgrestError | null;
+  }> {
+    const { error } = await this.supabase
+      .from("Alert_Recipient")
+      .delete()
+      .eq("Monster_Spawn_Id", monsterSpawnId)
+      .eq("Discord_Guild_Id", guildId)
+      .eq("Discord_User_Id", userId);
+
+    return { error };
   }
 
   private surpressSingleError<T>(

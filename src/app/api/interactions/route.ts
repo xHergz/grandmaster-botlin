@@ -2,10 +2,8 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { InteractionResponseType, InteractionType } from "discord-interactions";
-import { listMonsterCodes } from "@/utils/command.utils";
-import { createSuperUserClient } from "@/utils/supbase-server.utils";
-import SupabaseDataAccessLayer from "@/lib/supabase";
-import { verifyGuildMembership } from "@/utils/api.utils";
+import { addAlert, listMonsterCodes, removeAlert } from "@/utils/command.utils";
+import { respondToInteraction, verifyGuildMembership } from "@/utils/api.utils";
 import { DiscordGuild, DiscordUser } from "@/types/discord.types";
 
 const GENERIC_ERROR_RESPONSE = NextResponse.json(
@@ -42,37 +40,30 @@ export async function POST(req: NextRequest) {
       return GENERIC_ERROR_RESPONSE;
     }
     const command = body.data.name;
+    const monsterCode = body.data.options[0].value ?? null;
     switch (command) {
-      case "test":
-        return NextResponse.json(
-          {
-            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: {
-              content: "Hello world",
-            },
-          },
-          { status: 200 }
+      case "add-alert":
+        return respondToInteraction(
+          await addAlert(
+            monsterCode,
+            membership.Discord_Guild_Id,
+            membership.Discord_User_Id
+          )
         );
+      case "test":
+        return respondToInteraction("Hello world");
       case "monster-codes":
-        return NextResponse.json(
-          {
-            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: {
-              content: listMonsterCodes(),
-            },
-          },
-          { status: 200 }
+        return respondToInteraction(listMonsterCodes());
+      case "remove-alert":
+        return respondToInteraction(
+          await removeAlert(
+            monsterCode,
+            membership.Discord_Guild_Id,
+            membership.Discord_User_Id
+          )
         );
       default:
-        return NextResponse.json(
-          {
-            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: {
-              content: "Unknown command",
-            },
-          },
-          { status: 200 }
-        );
+        return respondToInteraction("Unknown command");
     }
   }
 
