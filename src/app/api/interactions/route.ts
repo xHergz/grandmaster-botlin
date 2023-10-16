@@ -40,7 +40,9 @@ export async function POST(req: NextRequest) {
       return GENERIC_ERROR_RESPONSE;
     }
     const command = body.data.name;
-    const monsterCode = body.data.options[0].value ?? null;
+    const monsterCode = Array.isArray(body.data.options)
+      ? body.data.options[0].value
+      : null;
     switch (command) {
       case "add-alert":
         return respondToInteraction(
