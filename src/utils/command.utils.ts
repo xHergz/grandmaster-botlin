@@ -10,7 +10,7 @@ import { MAP_DATA } from "@/constants/map.constants";
 import { PLANET_DATA } from "@/constants/planet.constants";
 import { createSuperUserClient } from "./supbase-server.utils";
 import SupabaseDataAccessLayer from "@/lib/supabase";
-import { addSeconds } from "date-fns";
+import { addSeconds, getUnixTime } from "date-fns";
 
 const getColour = (monster: MonsterCode): number => {
   const monsterInfo = MONSTER_SPAWN_DATA[monster];
@@ -135,7 +135,7 @@ export const resetSpawn = async (
   analytics.resetSpawn(guildId, userId, monsterCode);
   return `Spawn reset for ${
     MONSTER_SPAWN_DATA[monsterCode].name
-  }. Next spawn: <t:${newSpawnTime.getTime() / 1000}:R>`;
+  }. Next spawn: <t:${getUnixTime(newSpawnTime)}:R>`;
 };
 
 export const allSpawnInfo = (
