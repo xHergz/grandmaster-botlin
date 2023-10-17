@@ -5,7 +5,7 @@ import SupabaseDataAccessLayer, {
   User,
   UserId,
 } from "@/lib/supabase";
-import { DiscordGuild, DiscordUser } from "@/types/discord.types";
+import { DiscordGuild, DiscordUser, Embed } from "@/types/discord.types";
 import { createSuperUserClient } from "@/utils/supbase-server.utils";
 import { InteractionResponseType, verifyKey } from "discord-interactions";
 import { NextRequest, NextResponse } from "next/server";
@@ -16,6 +16,18 @@ export const respondToInteraction = (message: string): NextResponse => {
       type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
       data: {
         content: message,
+      },
+    },
+    { status: 200 }
+  );
+};
+
+export const respondWithEmbed = (embed: Embed): NextResponse => {
+  return NextResponse.json(
+    {
+      type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+      data: {
+        embeds: [embed],
       },
     },
     { status: 200 }

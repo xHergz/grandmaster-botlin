@@ -10,7 +10,11 @@ import {
   removeAlert,
   resetSpawn,
 } from "@/utils/command.utils";
-import { respondToInteraction, verifyGuildMembership } from "@/utils/api.utils";
+import {
+  respondToInteraction,
+  respondWithEmbed,
+  verifyGuildMembership,
+} from "@/utils/api.utils";
 import { DiscordGuild, DiscordUser } from "@/types/discord.types";
 import { getAvatarUrl } from "@/utils/discord.utils";
 
@@ -95,7 +99,9 @@ export async function POST(req: NextRequest) {
               user.name,
               getAvatarUrl(user)
             );
-        return respondToInteraction(JSON.stringify(embed));
+        return embed
+          ? respondWithEmbed(embed)
+          : respondToInteraction("Invalid monster code.");
       default:
         return respondToInteraction("Unknown command");
     }
