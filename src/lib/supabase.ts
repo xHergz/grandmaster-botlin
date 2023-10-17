@@ -14,6 +14,8 @@ export type Membership =
 export type MonsterSpawn = Database["public"]["Tables"]["Monster_Spawn"]["Row"];
 export type MonsterSpawnId = MonsterSpawn["Monster_Spawn_Id"];
 
+export type TrackedSpawn = Database["public"]["Tables"]["Tracked_Spawn"]["Row"];
+
 export type User = Database["public"]["Tables"]["Discord_User"]["Row"];
 export type UserId = User["Discord_User_Id"];
 
@@ -74,6 +76,23 @@ class SupabaseDataAccessLayer {
       .from("Monster_Spawn")
       .select("*")
       .eq("Monster_Spawn_Id", monsterSpawnId)
+      .single();
+    return this.surpressSingleError(error, data);
+  }
+
+  async getTrackedSpawn(
+    monsterSpawnId: MonsterSpawnId,
+    guildId: GuildId
+  ): Promise<{
+    error: PostgrestError | null;
+    data: TrackedSpawn | null;
+  }> {
+    const { error, data } = await this.supabase
+      .from("Tracked_Spawn")
+      .select("*")
+      .eq("Monster_Spawn_Id", monsterSpawnId)
+      .eq("Discord_Guild_Id", guildId)
+      .order("Spawn_Time", { ascending: false })
       .single();
     return this.surpressSingleError(error, data);
   }
@@ -187,6 +206,31 @@ class SupabaseDataAccessLayer {
       .eq("Discord_User_Id", userId);
 
     return { error };
+  }
+
+  async upsertTrackedSpawn(
+    monsterSpawnId: MonsterSpawnId,
+    guildId: GuildId,
+    userId: UserId,
+    spawnTime: Date
+  ): Promise<{
+    error: PostgrestError | null;
+    data: TrackedSpawn | null;
+  }> {
+    const { error, data } = await this.supabase
+      .from("Tracked_Spawn")
+      .upsert({
+        Monster_Spawn_Id: monsterSpawnId,
+        Discord_Guild_Id: guildId,
+        Discord_User_Id: userId,
+        Spawn_Time: spawnTime,
+      })
+      .eq("Monster_Spawn_Id", monsterSpawnId)
+      .eq("Discord_Guild_Id", guildId)
+      .eq("Discord_User_Id", userId)
+      .single();
+
+    return { error, data: data ?? null };
   }
 
   private surpressSingleError<T>(

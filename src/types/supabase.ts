@@ -127,6 +127,7 @@ export interface Database {
       };
       Tracked_Spawn: {
         Row: {
+          Alerted_At: string | null;
           Discord_Guild_Id: string;
           Discord_User_Id: string;
           Monster_Spawn_Id: string;
@@ -134,6 +135,7 @@ export interface Database {
           Tracked_Spawn_Id: string;
         };
         Insert: {
+          Alerted_At?: string | null;
           Discord_Guild_Id: string;
           Discord_User_Id: string;
           Monster_Spawn_Id: string;
@@ -141,6 +143,7 @@ export interface Database {
           Tracked_Spawn_Id?: string;
         };
         Update: {
+          Alerted_At?: string | null;
           Discord_Guild_Id?: string;
           Discord_User_Id?: string;
           Monster_Spawn_Id?: string;

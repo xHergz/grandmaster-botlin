@@ -2,7 +2,12 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { InteractionResponseType, InteractionType } from "discord-interactions";
-import { addAlert, listMonsterCodes, removeAlert } from "@/utils/command.utils";
+import {
+  addAlert,
+  listMonsterCodes,
+  removeAlert,
+  resetSpawn,
+} from "@/utils/command.utils";
 import { respondToInteraction, verifyGuildMembership } from "@/utils/api.utils";
 import { DiscordGuild, DiscordUser } from "@/types/discord.types";
 
@@ -64,6 +69,15 @@ export async function POST(req: NextRequest) {
             membership.Discord_User_Id
           )
         );
+      case "reset": {
+        return respondToInteraction(
+          await resetSpawn(
+            monsterCode,
+            membership.Discord_Guild_Id,
+            membership.Discord_User_Id
+          )
+        );
+      }
       default:
         return respondToInteraction("Unknown command");
     }

@@ -10,6 +10,7 @@ import { MAP_DATA } from "@/constants/map.constants";
 import { PLANET_DATA } from "@/constants/planet.constants";
 import { createSuperUserClient } from "./supbase-server.utils";
 import SupabaseDataAccessLayer from "@/lib/supabase";
+import { addSeconds } from "date-fns";
 
 const getColour = (monster: MonsterCode): number => {
   const monsterInfo = MONSTER_SPAWN_DATA[monster];
@@ -103,19 +104,38 @@ export const removeAlert = async (
   return `You've been removed from alerts for ${MONSTER_SPAWN_DATA[monsterCode].name}.`;
 };
 
-export const resetSpawn = (
+export const resetSpawn = async (
   monsterCode: string,
   guildId: string,
   userId: string
-): string => {
+): Promise<string> => {
   if (!MONSTER_CODES.includes(monsterCode)) {
     analytics.invalidMonsterCode(guildId, userId, monsterCode);
     return "Invalid monster code.";
   }
 
+  const newSpawnTime = addSeconds(
+    new Date(),
+    MONSTER_SPAWN_DATA[monsterCode].secondToSpawn
+  );
+  const supabase = createSuperUserClient();
+  const db = new SupabaseDataAccessLayer(supabase);
+  const response = await db.upsertTrackedSpawn(
+    monsterCode,
+    guildId,
+    userId,
+    newSpawnTime
+  );
+
+  if (response.error) {
+    analytics.commandFailed(guildId, userId, "reset", response.error.message);
+    return "Unable to reset spawn. Please try again later.";
+  }
+
   analytics.resetSpawn(guildId, userId, monsterCode);
-  const spawnInfo = guildTracker.resetSpawn(guildId, monsterCode);
-  return `Spawn reset for ${MONSTER_SPAWN_DATA[monsterCode].name}. Next spawn: <t:${spawnInfo.spawnTime}:R>`;
+  return `Spawn reset for ${
+    MONSTER_SPAWN_DATA[monsterCode].name
+  }. Next spawn: <t:${newSpawnTime.getTime() / 1000}:R>`;
 };
 
 export const allSpawnInfo = (
