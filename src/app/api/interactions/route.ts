@@ -4,12 +4,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { InteractionResponseType, InteractionType } from "discord-interactions";
 import {
   addAlert,
+  allSpawnInfo,
   listMonsterCodes,
+  monsterSpawnInfo,
   removeAlert,
   resetSpawn,
 } from "@/utils/command.utils";
 import { respondToInteraction, verifyGuildMembership } from "@/utils/api.utils";
 import { DiscordGuild, DiscordUser } from "@/types/discord.types";
+import { getAvatarUrl } from "@/utils/discord.utils";
 
 const GENERIC_ERROR_RESPONSE = NextResponse.json(
   {
@@ -38,6 +41,7 @@ export async function POST(req: NextRequest) {
     const user: DiscordUser = {
       id: body.member.user.id,
       name: body.member.user.username,
+      avatarId: body.member.user.avatar,
     };
     // Check if the membership exists
     const membership = await verifyGuildMembership(guild, user);
@@ -57,8 +61,6 @@ export async function POST(req: NextRequest) {
             membership.Discord_User_Id
           )
         );
-      case "test":
-        return respondToInteraction("Hello world");
       case "monster-codes":
         return respondToInteraction(listMonsterCodes());
       case "remove-alert":
@@ -78,6 +80,22 @@ export async function POST(req: NextRequest) {
           )
         );
       }
+      case "spawn-info":
+        const embed = monsterCode
+          ? monsterSpawnInfo(
+              monsterCode,
+              membership.Discord_Guild_Id,
+              membership.Discord_User_Id,
+              user.name,
+              getAvatarUrl(user)
+            )
+          : allSpawnInfo(
+              membership.Discord_Guild_Id,
+              membership.Discord_User_Id,
+              user.name,
+              getAvatarUrl(user)
+            );
+        return respondToInteraction(JSON.stringify(embed));
       default:
         return respondToInteraction("Unknown command");
     }

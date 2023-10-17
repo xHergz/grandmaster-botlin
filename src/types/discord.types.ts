@@ -12,6 +12,7 @@ export type DiscordGuild = {
 export type DiscordUser = {
   id: string;
   name: string;
+  avatarId: string;
 };
 
 export type EmbedAuthor = {
