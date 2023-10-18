@@ -93,7 +93,7 @@ class SupabaseDataAccessLayer {
       .select("*")
       .eq("Monster_Spawn_Id", monsterSpawnId)
       .eq("Discord_Guild_Id", guildId)
-      .order("Spawn_Time", { ascending: false })
+      .order("Spawn_Time", { ascending: true })
       .single();
     return this.surpressSingleError(error, data);
   }
