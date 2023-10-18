@@ -93,9 +93,10 @@ class SupabaseDataAccessLayer {
       .select("*")
       .eq("Monster_Spawn_Id", monsterSpawnId)
       .eq("Discord_Guild_Id", guildId)
-      .order("Spawn_Time", { ascending: true })
-      .single();
-    return this.surpressSingleError(error, data);
+      .order("Spawn_Time", { ascending: false })
+      .limit(1);
+    const hasResults = data && data.length && data.length > 0;
+    return { error, data: hasResults ? data[0] : null };
   }
 
   async getUser(
