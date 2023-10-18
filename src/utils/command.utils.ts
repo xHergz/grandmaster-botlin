@@ -132,6 +132,8 @@ export const resetSpawn = async (
     return "Unable to reset spawn. Please try again later.";
   }
 
+  console.log(JSON.stringify(getResponse.data));
+
   if (!getResponse.data || getResponse.data.Alerted_At) {
     const createResponse = await db.createTrackedSpawn(
       monsterCode,
