@@ -120,16 +120,49 @@ export const resetSpawn = async (
   );
   const supabase = createSuperUserClient();
   const db = new SupabaseDataAccessLayer(supabase);
-  const response = await db.upsertTrackedSpawn(
-    monsterCode,
-    guildId,
-    userId,
-    newSpawnTime
-  );
+  const getResponse = await db.getTrackedSpawn(monsterCode, guildId);
 
-  if (response.error) {
-    analytics.commandFailed(guildId, userId, "reset", response.error.message);
+  if (getResponse.error) {
+    analytics.commandFailed(
+      guildId,
+      userId,
+      "reset",
+      getResponse.error.message
+    );
     return "Unable to reset spawn. Please try again later.";
+  }
+
+  if (!getResponse.data || getResponse.data.Alerted_At) {
+    const createResponse = await db.createTrackedSpawn(
+      monsterCode,
+      guildId,
+      userId,
+      newSpawnTime
+    );
+    if (createResponse.error) {
+      analytics.commandFailed(
+        guildId,
+        userId,
+        "reset",
+        createResponse.error.message
+      );
+      return "Unable to reset spawn. Please try again later.";
+    }
+  } else {
+    const updateResponse = await db.updateTrackedSpawn(
+      getResponse.data.Tracked_Spawn_Id,
+      userId,
+      newSpawnTime
+    );
+    if (updateResponse.error) {
+      analytics.commandFailed(
+        guildId,
+        userId,
+        "reset",
+        updateResponse.error.message
+      );
+      return "Unable to reset spawn. Please try again later.";
+    }
   }
 
   analytics.resetSpawn(guildId, userId, monsterCode);

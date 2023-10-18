@@ -15,6 +15,7 @@ export type MonsterSpawn = Database["public"]["Tables"]["Monster_Spawn"]["Row"];
 export type MonsterSpawnId = MonsterSpawn["Monster_Spawn_Id"];
 
 export type TrackedSpawn = Database["public"]["Tables"]["Tracked_Spawn"]["Row"];
+export type TrackedSpawnId = TrackedSpawn["Tracked_Spawn_Id"];
 
 export type User = Database["public"]["Tables"]["Discord_User"]["Row"];
 export type UserId = User["Discord_User_Id"];
@@ -173,6 +174,31 @@ class SupabaseDataAccessLayer {
     return { error, data: data ?? null };
   }
 
+  async createTrackedSpawn(
+    monsterSpawnId: MonsterSpawnId,
+    guildId: GuildId,
+    userId: UserId,
+    spawnTime: Date
+  ): Promise<{
+    error: PostgrestError | null;
+    data: TrackedSpawn | null;
+  }> {
+    const { error, data } = await this.supabase
+      .from("Tracked_Spawn")
+      .insert([
+        {
+          Monster_Spawn_Id: monsterSpawnId,
+          Discord_Guild_Id: guildId,
+          Discord_User_Id: userId,
+          Spawn_Time: spawnTime,
+        },
+      ])
+      .select("*")
+      .single();
+
+    return { error, data: data ?? null };
+  }
+
   async createUser(
     userId: UserId,
     name: User["Name"]
@@ -208,9 +234,8 @@ class SupabaseDataAccessLayer {
     return { error };
   }
 
-  async upsertTrackedSpawn(
-    monsterSpawnId: MonsterSpawnId,
-    guildId: GuildId,
+  async updateTrackedSpawn(
+    trackedSpawnId: TrackedSpawnId,
     userId: UserId,
     spawnTime: Date
   ): Promise<{
@@ -219,15 +244,11 @@ class SupabaseDataAccessLayer {
   }> {
     const { error, data } = await this.supabase
       .from("Tracked_Spawn")
-      .upsert({
-        Monster_Spawn_Id: monsterSpawnId,
-        Discord_Guild_Id: guildId,
+      .update({
         Discord_User_Id: userId,
         Spawn_Time: spawnTime,
       })
-      .eq("Monster_Spawn_Id", monsterSpawnId)
-      .eq("Discord_Guild_Id", guildId)
-      .eq("Discord_User_Id", userId)
+      .eq("Tracked_Spawn_Id", trackedSpawnId)
       .single();
 
     return { error, data: data ?? null };
