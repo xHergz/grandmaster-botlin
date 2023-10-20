@@ -107,7 +107,8 @@ export const removeAlert = async (
 export const resetSpawn = async (
   monsterCode: string,
   guildId: string,
-  userId: string
+  userId: string,
+  channelId: string
 ): Promise<string> => {
   if (!MONSTER_CODES.includes(monsterCode)) {
     analytics.invalidMonsterCode(guildId, userId, monsterCode);
@@ -137,6 +138,7 @@ export const resetSpawn = async (
       monsterCode,
       guildId,
       userId,
+      channelId,
       newSpawnTime
     );
     if (createResponse.error) {

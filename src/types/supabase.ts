@@ -128,6 +128,7 @@ export interface Database {
       Tracked_Spawn: {
         Row: {
           Alerted_At: string | null;
+          Discord_Channel_Id: string;
           Discord_Guild_Id: string;
           Discord_User_Id: string;
           Monster_Spawn_Id: string;
@@ -136,6 +137,7 @@ export interface Database {
         };
         Insert: {
           Alerted_At?: string | null;
+          Discord_Channel_Id: string;
           Discord_Guild_Id: string;
           Discord_User_Id: string;
           Monster_Spawn_Id: string;
@@ -144,6 +146,7 @@ export interface Database {
         };
         Update: {
           Alerted_At?: string | null;
+          Discord_Channel_Id?: string;
           Discord_Guild_Id?: string;
           Discord_User_Id?: string;
           Monster_Spawn_Id?: string;
@@ -176,7 +179,10 @@ export interface Database {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      check_spawn_time: {
+        Args: Record<PropertyKey, never>;
+        Returns: undefined;
+      };
     };
     Enums: {
       [_ in never]: never;

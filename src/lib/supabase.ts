@@ -42,6 +42,18 @@ class SupabaseDataAccessLayer {
     return this.surpressSingleError(error, data);
   }
 
+  async getAllAlertRecipients(
+    monsterSpawnId: MonsterSpawnId,
+    guildId: GuildId
+  ): Promise<{ error: PostgrestError | null; data: User[] }> {
+    const { error, data } = await this.supabase
+      .from("Alert_Recipient")
+      .select("*")
+      .eq("Monster_Spawn_Id", monsterSpawnId)
+      .eq("Discord_Guild_Id", guildId);
+    return { error, data: data ?? [] };
+  }
+
   async getGuild(
     guildId: GuildId
   ): Promise<{ error: PostgrestError | null; data: Guild | null }> {
@@ -97,6 +109,17 @@ class SupabaseDataAccessLayer {
       .limit(1);
     const hasResults = data && data.length && data.length > 0;
     return { error, data: hasResults ? data[0] : null };
+  }
+
+  async getTrackedSpawns(trackedSpawnIds: TrackedSpawnId[]): Promise<{
+    error: PostgrestError | null;
+    data: TrackedSpawn[];
+  }> {
+    const { error, data } = await this.supabase
+      .from("Tracked_Spawn")
+      .select("*")
+      .in("Tracked_Spawn_Id", trackedSpawnIds);
+    return { error, data: data ?? [] };
   }
 
   async getUser(
@@ -179,6 +202,7 @@ class SupabaseDataAccessLayer {
     monsterSpawnId: MonsterSpawnId,
     guildId: GuildId,
     userId: UserId,
+    channelId: string,
     spawnTime: Date
   ): Promise<{
     error: PostgrestError | null;
@@ -192,6 +216,7 @@ class SupabaseDataAccessLayer {
           Discord_Guild_Id: guildId,
           Discord_User_Id: userId,
           Spawn_Time: spawnTime,
+          Discord_Channel_Id: channelId,
         },
       ])
       .select("*")
@@ -253,6 +278,21 @@ class SupabaseDataAccessLayer {
       .single();
 
     return { error, data: data ?? null };
+  }
+
+  async updateTrackedSpawnAlertedAt(
+    trackedSpawnIds: TrackedSpawnId[]
+  ): Promise<{
+    error: PostgrestError | null;
+  }> {
+    const { error } = await this.supabase
+      .from("Tracked_Spawn")
+      .update({
+        Alerted_At: new Date(),
+      })
+      .in("Tracked_Spawn_Id", trackedSpawnIds);
+
+    return { error };
   }
 
   private surpressSingleError<T>(

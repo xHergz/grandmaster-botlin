@@ -47,6 +47,7 @@ export async function POST(req: NextRequest) {
       name: body.member.user.username,
       avatarId: body.member.user.avatar,
     };
+    const channelId = body.channel_id;
     // Check if the membership exists
     const membership = await verifyGuildMembership(guild, user);
     if (!membership) {
@@ -80,7 +81,8 @@ export async function POST(req: NextRequest) {
           await resetSpawn(
             monsterCode,
             membership.Discord_Guild_Id,
-            membership.Discord_User_Id
+            membership.Discord_User_Id,
+            channelId
           )
         );
       }
