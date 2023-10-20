@@ -7,17 +7,17 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { trackedSpawnIds: ids } = body;
+  const { ids: trackedSpawnIds } = body;
 
-  if (!ids || !Array.isArray(ids)) {
-    console.warn("Invalid tracked spawn ids", ids);
+  if (!trackedSpawnIds || !Array.isArray(trackedSpawnIds)) {
+    console.warn("Invalid tracked spawn ids", trackedSpawnIds);
     return NextResponse.json({}, { status: 400 });
   }
 
   const supabase = createSuperUserClient();
   const db = new SupabaseDataAccessLayer(supabase);
 
-  const getResponse = await db.getTrackedSpawns(ids);
+  const getResponse = await db.getTrackedSpawns(trackedSpawnIds);
   if (getResponse.error || !getResponse.data) {
     console.error("Error getting tracked spawns", getResponse.error);
     return NextResponse.json({}, { status: 500 });
