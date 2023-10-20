@@ -66,7 +66,6 @@ export async function POST(req: NextRequest) {
       successfulAlerts.push(spawn.Tracked_Spawn_Id);
     }
   }
-  console.log("Successful alerts", successfulAlerts);
 
   const updateResponse = await db.updateTrackedSpawnAlertedAt(successfulAlerts);
   if (updateResponse.error) {

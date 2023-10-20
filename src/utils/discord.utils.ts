@@ -22,6 +22,5 @@ export const sendMessage = async (
       }),
     }
   );
-  console.log(JSON.stringify(response));
   return response.status === 200 ? true : false;
 };
