@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
     console.log("Spawn time", spawn.Spawn_Time, typeof spawn.Spawn_Time);
     const spawnTime = parse(
       spawn.Spawn_Time,
-      "yyyy-MM-ddTHH:mm:ss",
+      "yyyy-MM-dd'T'HH:mm:ss",
       new Date()
     );
     const success = await sendMessage(
