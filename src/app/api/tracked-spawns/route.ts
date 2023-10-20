@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
       spawn.Discord_Channel_Id,
       `${
         MONSTER_SPAWN_DATA[spawn.Monster_Spawn_Id].name
-      } is spawning soon: <t:${getUnixTime(spawnTime)}:R>. ${mentions}}`
+      } is spawning soon: <t:${getUnixTime(spawnTime)}:R>. ${mentions}`
     );
     if (success) {
       successfulAlerts.push(spawn.Tracked_Spawn_Id);
