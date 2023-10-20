@@ -12,6 +12,9 @@ export async function POST(req: NextRequest) {
   if (!trackedSpawnIds || !Array.isArray(trackedSpawnIds)) {
     console.warn("Invalid tracked spawn ids", trackedSpawnIds);
     return NextResponse.json({}, { status: 400 });
+  } else if (trackedSpawnIds.length === 0) {
+    console.info("No tracked spawn ids");
+    return NextResponse.json({}, { status: 200 });
   }
 
   const supabase = createSuperUserClient();
@@ -20,6 +23,11 @@ export async function POST(req: NextRequest) {
   const getResponse = await db.getTrackedSpawns(trackedSpawnIds);
   if (getResponse.error || !getResponse.data) {
     console.error("Error getting tracked spawns", getResponse.error);
+    return NextResponse.json({}, { status: 500 });
+  } else if (getResponse.data.length === 0) {
+    console.warn(
+      `No tracked spawns found in the database (expected ${trackedSpawnIds.length})`
+    );
     return NextResponse.json({}, { status: 500 });
   }
 
@@ -43,6 +51,7 @@ export async function POST(req: NextRequest) {
       alertRecipientResponse.data
         .map((recipient) => `<@${recipient.Discord_User_Id}>`)
         .join(" ") ?? "";
+    console.log("Spawn time", spawn.Spawn_Time);
     const spawnTime = parse(
       spawn.Spawn_Time,
       "yyyy-MM-dd HH:mm:ss",
@@ -58,6 +67,7 @@ export async function POST(req: NextRequest) {
       successfulAlerts.push(spawn.Tracked_Spawn_Id);
     }
   });
+  console.log("Successful alerts", successfulAlerts);
 
   const updateResponse = await db.updateTrackedSpawnAlertedAt(successfulAlerts);
   if (updateResponse.error) {
