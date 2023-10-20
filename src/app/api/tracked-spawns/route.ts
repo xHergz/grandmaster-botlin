@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
   }
 
   const successfulAlerts: TrackedSpawnId[] = [];
-  getResponse.data.forEach(async (spawn) => {
+  for (const spawn of getResponse.data) {
     const alertRecipientResponse = await db.getAllAlertRecipients(
       spawn.Monster_Spawn_Id,
       spawn.Discord_Guild_Id
@@ -51,7 +51,6 @@ export async function POST(req: NextRequest) {
       alertRecipientResponse.data
         .map((recipient) => `<@${recipient.Discord_User_Id}>`)
         .join(" ") ?? "";
-    console.log("Spawn time", spawn.Spawn_Time, typeof spawn.Spawn_Time);
     const spawnTime = parse(
       spawn.Spawn_Time,
       "yyyy-MM-dd'T'HH:mm:ss",
@@ -66,7 +65,7 @@ export async function POST(req: NextRequest) {
     if (success) {
       successfulAlerts.push(spawn.Tracked_Spawn_Id);
     }
-  });
+  }
   console.log("Successful alerts", successfulAlerts);
 
   const updateResponse = await db.updateTrackedSpawnAlertedAt(successfulAlerts);
