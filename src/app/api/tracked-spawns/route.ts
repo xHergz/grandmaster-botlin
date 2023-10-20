@@ -51,10 +51,10 @@ export async function POST(req: NextRequest) {
       alertRecipientResponse.data
         .map((recipient) => `<@${recipient.Discord_User_Id}>`)
         .join(" ") ?? "";
-    console.log("Spawn time", spawn.Spawn_Time);
+    console.log("Spawn time", spawn.Spawn_Time, typeof spawn.Spawn_Time);
     const spawnTime = parse(
       spawn.Spawn_Time,
-      "yyyy-MM-dd HH:mm:ss",
+      "yyyy-MM-ddTHH:mm:ss",
       new Date()
     );
     const success = await sendMessage(
