@@ -4,10 +4,16 @@ import { sendMessage } from "@/utils/discord.utils";
 import { createSuperUserClient } from "@/utils/supbase-server.utils";
 import { getUnixTime, parse, parseISO } from "date-fns";
 import { NextRequest, NextResponse } from "next/server";
+import { headers } from "next/headers";
 
 export async function POST(req: NextRequest) {
+  const headerList = headers();
   const body = await req.json();
   const { ids: trackedSpawnIds } = body;
+
+  if (headerList.get("Authorization") !== process.env.TRACKED_SPAWNS_KEY) {
+    return NextResponse.json({}, { status: 401 });
+  }
 
   if (!trackedSpawnIds || !Array.isArray(trackedSpawnIds)) {
     console.warn("Invalid tracked spawn ids", trackedSpawnIds);
