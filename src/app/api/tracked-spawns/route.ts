@@ -11,7 +11,6 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const { ids: trackedSpawnIds } = body;
   const token = headerList.get("Authorization");
-  console.log(token);
 
   if (token !== process.env.TRACKED_SPAWNS_KEY) {
     return NextResponse.json({}, { status: 401 });
