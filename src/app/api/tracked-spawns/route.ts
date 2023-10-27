@@ -51,7 +51,6 @@ export async function POST(req: NextRequest) {
       alertRecipientResponse.data
         .map((recipient) => `<@${recipient.Discord_User_Id}>`)
         .join(" ") ?? "";
-    console.log(spawn.Spawn_Time);
     const spawnTime = parseISO(spawn.Spawn_Time);
     const success = await sendMessage(
       spawn.Discord_Channel_Id,

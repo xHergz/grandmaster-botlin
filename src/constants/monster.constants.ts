@@ -178,11 +178,4 @@ export const MONSTER_SPAWN_DATA: MonsterSpawnData = {
     map: "cotd",
     spawnImageUrl: "https://i.imgur.com/bogZMPz.png",
   },
-  test: {
-    npcId: 1,
-    name: "Test",
-    secondToSpawn: 60,
-    map: "jcf",
-    spawnImageUrl: "https://i.imgur.com/bogZMPz.png",
-  },
 };
