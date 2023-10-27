@@ -1,3 +1,4 @@
+import analytics from "@/lib/analytics";
 import SupabaseDataAccessLayer, {
   Guild,
   GuildId,
@@ -102,6 +103,7 @@ export const verifyGuild = async (
   }
   if (!response.data) {
     const { error, data } = await db.createGuild(guild.id, guild.name);
+    analytics.joinedServer(guild.id);
     if (error || !data) {
       console.error(error ?? "Failed to create guild.");
       return null;

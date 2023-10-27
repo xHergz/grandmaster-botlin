@@ -98,18 +98,12 @@ class Analytics {
     this.track("INVALID_MONSTER_CODE", guildId, userId, { unknownCode: code });
   }
 
-  public joinedServer(guildId: string, guildName: string) {
-    this.track("JOINED_SERVER", guildId, SYSTEM_ID, {
-      guildName,
-    });
+  public joinedServer(guildId: string) {
+    this.track("JOINED_SERVER", guildId, SYSTEM_ID);
   }
 
   public listedMonsterCodes(guildId: string, userId: string) {
     this.track("LISTED_MONSTER_CODES", guildId, userId);
-  }
-
-  public loggedIn() {
-    this.track("LOGGED_IN", SYSTEM_ID, SYSTEM_ID);
   }
 
   public removedAlert(

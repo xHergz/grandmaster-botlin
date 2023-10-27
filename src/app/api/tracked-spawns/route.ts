@@ -5,6 +5,7 @@ import { createSuperUserClient } from "@/utils/supbase-server.utils";
 import { getUnixTime, parse, parseISO } from "date-fns";
 import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
+import analytics from "@/lib/analytics";
 
 export async function POST(req: NextRequest) {
   const headerList = headers();
@@ -66,6 +67,14 @@ export async function POST(req: NextRequest) {
       } is spawning soon: <t:${getUnixTime(spawnTime)}:R>. ${mentions}`
     );
     if (success) {
+      const recipients = alertRecipientResponse.data.map(
+        (recipient) => recipient.Discord_User_Id
+      );
+      analytics.sentAlert(
+        spawn.Discord_Guild_Id,
+        spawn.Monster_Spawn_Id,
+        recipients
+      );
       successfulAlerts.push(spawn.Tracked_Spawn_Id);
     }
   }

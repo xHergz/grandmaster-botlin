@@ -17,6 +17,7 @@ import {
 } from "@/utils/api.utils";
 import { DiscordGuild, DiscordUser } from "@/types/discord.types";
 import { getAvatarUrl } from "@/utils/discord.utils";
+import analytics from "@/lib/analytics";
 
 const GENERIC_ERROR_RESPONSE = NextResponse.json(
   {
@@ -53,6 +54,7 @@ export async function POST(req: NextRequest) {
     if (!membership) {
       return GENERIC_ERROR_RESPONSE;
     }
+    analytics.identify(user.id, user.name, guild.id);
     const command = body.data.name;
     const monsterCode = Array.isArray(body.data.options)
       ? body.data.options[0].value
@@ -67,6 +69,7 @@ export async function POST(req: NextRequest) {
           )
         );
       case "monster-codes":
+        analytics.listedMonsterCodes(guild.id, user.id);
         return respondToInteraction(listMonsterCodes());
       case "remove-alert":
         return respondToInteraction(
@@ -76,7 +79,7 @@ export async function POST(req: NextRequest) {
             membership.Discord_User_Id
           )
         );
-      case "reset": {
+      case "reset":
         return respondToInteraction(
           await resetSpawn(
             monsterCode,
@@ -85,7 +88,6 @@ export async function POST(req: NextRequest) {
             channelId
           )
         );
-      }
       case "spawn-info":
         const embed = monsterCode
           ? monsterSpawnInfo(
@@ -105,6 +107,11 @@ export async function POST(req: NextRequest) {
           ? respondWithEmbed(embed)
           : respondToInteraction("Invalid monster code.");
       default:
+        analytics.commandNotFound(
+          membership.Discord_Guild_Id,
+          membership.Discord_User_Id,
+          command
+        );
         return respondToInteraction("Unknown command");
     }
   }
