@@ -20,6 +20,8 @@ type MixpanelEvent = (typeof MIXPANEL_EVENTS)[number];
 
 const SYSTEM_ID = "SYSTEM";
 
+const SKIPPED_GUILDS = ["598157729499971584"];
+
 export type IdProperties = {
   userId: string;
   guildId: string;
@@ -78,7 +80,7 @@ class Analytics {
   }
 
   public identify(userId: string, username: string, guildId: string) {
-    if (!this.mixpanel) {
+    if (!this.mixpanel || SKIPPED_GUILDS.includes(guildId)) {
       console.info(
         `[MIXPANEL] Identify - userId: ${userId}, username: ${username}, guildId: ${guildId}`
       );
@@ -149,7 +151,7 @@ class Analytics {
     userId: string,
     properties: object = {}
   ) {
-    if (!this.mixpanel) {
+    if (!this.mixpanel || SKIPPED_GUILDS.includes(guildId)) {
       console.info(
         `[MIXPANEL] Track - event: ${event}, userId: ${userId}, guildId: ${guildId}, properties: ${JSON.stringify(
           properties
