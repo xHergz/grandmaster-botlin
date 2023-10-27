@@ -20,7 +20,8 @@ type MixpanelEvent = (typeof MIXPANEL_EVENTS)[number];
 
 const SYSTEM_ID = "SYSTEM";
 
-const SKIPPED_GUILDS = ["598157729499971584"];
+// const SKIPPED_GUILDS = ["598157729499971584"];
+const SKIPPED_GUILDS: string[] = [];
 
 export type IdProperties = {
   userId: string;
