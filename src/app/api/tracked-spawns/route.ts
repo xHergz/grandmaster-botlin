@@ -2,7 +2,7 @@ import { MONSTER_SPAWN_DATA } from "@/constants/monster.constants";
 import SupabaseDataAccessLayer, { TrackedSpawnId } from "@/lib/supabase";
 import { sendMessage } from "@/utils/discord.utils";
 import { createSuperUserClient } from "@/utils/supbase-server.utils";
-import { getUnixTime, parse } from "date-fns";
+import { getUnixTime, parse, parseISO } from "date-fns";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -52,11 +52,7 @@ export async function POST(req: NextRequest) {
         .map((recipient) => `<@${recipient.Discord_User_Id}>`)
         .join(" ") ?? "";
     console.log(spawn.Spawn_Time);
-    const spawnTime = parse(
-      spawn.Spawn_Time,
-      "yyyy-MM-dd'T'HH:mm:ss",
-      new Date()
-    );
+    const spawnTime = parseISO(spawn.Spawn_Time);
     const success = await sendMessage(
       spawn.Discord_Channel_Id,
       `${
