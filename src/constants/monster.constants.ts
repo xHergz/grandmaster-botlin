@@ -21,7 +21,6 @@ export const MONSTER_CODES = [
   "fd",
   "ak",
   "gem",
-  "test",
 ];
 export type MonsterCode = (typeof MONSTER_CODES)[number];
 
