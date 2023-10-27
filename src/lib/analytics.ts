@@ -1,4 +1,4 @@
-import Mixpanel, { Mixpanel as MixpanelType, init } from "mixpanel-browser";
+import Mixpanel from "mixpanel";
 
 import { MonsterCode } from "../constants/monster.constants";
 
@@ -34,12 +34,11 @@ export type MonsterProperties = {
 
 class Analytics {
   private static instance: Analytics;
-  private initialized = false;
+  private mixpanel: Mixpanel.Mixpanel | null = null;
 
   private constructor() {
     if (process.env.NODE_ENV === "production" && process.env.MIXPANEL_TOKEN) {
-      Mixpanel.init(process.env.MIXPANEL_TOKEN!);
-      this.initialized = true;
+      this.mixpanel = Mixpanel.init(process.env.MIXPANEL_TOKEN!);
     }
   }
 
@@ -82,16 +81,20 @@ class Analytics {
   }
 
   public identify(userId: string, username: string, guildId: string) {
-    if (this.initialized || SKIPPED_GUILDS.includes(guildId)) {
+    if (!this.mixpanel || SKIPPED_GUILDS.includes(guildId)) {
       console.info(
         `[MIXPANEL] Identify - userId: ${userId}, username: ${username}, guildId: ${guildId}`
       );
       return;
     }
-    Mixpanel.people.set_once("$created", new Date().toISOString());
-    Mixpanel.people.set("$name", username);
-    Mixpanel.people.union("guilds", guildId);
-    Mixpanel.people.increment("commands");
+    this.mixpanel.people.set_once(userId, {
+      $created: new Date().toISOString(),
+    });
+    this.mixpanel.people.set(userId, {
+      $name: username,
+    });
+    this.mixpanel.people.union(userId, { guilds: guildId });
+    this.mixpanel.people.increment(userId, "commands");
   }
 
   public invalidMonsterCode(guildId: string, userId: string, code: string) {
@@ -149,7 +152,7 @@ class Analytics {
     userId: string,
     properties: object = {}
   ) {
-    if (!this.initialized || SKIPPED_GUILDS.includes(guildId)) {
+    if (!this.mixpanel || SKIPPED_GUILDS.includes(guildId)) {
       console.info(
         `[MIXPANEL] Track - event: ${event}, userId: ${userId}, guildId: ${guildId}, properties: ${JSON.stringify(
           properties
@@ -157,7 +160,7 @@ class Analytics {
       );
       return;
     }
-    Mixpanel.track(event, {
+    this.mixpanel.track(event, {
       distinct_id: userId,
       guildId,
       ...properties,
